@@ -2,14 +2,18 @@
 % to get the actual values.
 
 % Define constants
-d = 22;
-c = 0.056;
-l = 1/180;
+d = 1;
+c = 2;
+l = 2;
 
 % Non-dimensionalize constants
 gamma = c * d;
 lambda = l * d;
-n = 1;
+s0 = 0.95;
+i0 = 0.025;
+r0 = 0.025;
+n0 = s0 + i0 + r0;
+
 
 % Define functions
 %syms s(t) i(t) r(t)
@@ -35,9 +39,9 @@ V = @(t,x)[-gamma * x(1) * x(2) + lambda * x(3);
 % V0 = [1/gamma; lambda*C; C];
 
 % Regular solution
-V0 = [0.95; 0.025; 0.025];
+V0 = [s0; i0; r0];
 
-[T,Z] = ode45(V, [0 200], V0);
+[T,Z] = ode45(V, [0 10], V0);
 
 s = Z(:,1);
 i = Z(:,2);
@@ -54,13 +58,15 @@ r = Z(:,3);
 %subplot(2, 2, 3)
 %plot(T, r)
 %subplot(2, 2, 4)
-plot(T, s)
+plot(T, s, "LineWidth", 2)
 hold on;
-plot(T, i)
-plot(T, r)
+plot(T, i, "LineWidth", 2)
+plot(T, r, "LineWidth", 2)
 legend('s', 'i', 'r');
 xlabel('Non-dimensionalized time');
 ylabel('Non-dimensionalized population');
+
+saveas(gcf, sprintf("short ts s=%02d, i=%02d, r=%02d, l=%02d g=%02d.pdf", s0, i0, r0, lambda, gamma))
 
 % Solve on interval
 %interval = [0 20];
